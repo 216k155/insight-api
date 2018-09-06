@@ -200,7 +200,7 @@ AddressBlocksMinedService.prototype.processBlock = function (blockHeight, next) 
 
 
     return async.waterfall([function (callback) {
-        return self.node.services.luxd.getJsonBlock(blockHeight, function (err, response) {
+        return self.node.getJsonBlock(blockHeight, function (err, response) {
 
             if (err) {
                 return callback(err);
@@ -218,15 +218,10 @@ AddressBlocksMinedService.prototype.processBlock = function (blockHeight, next) 
     }, function (callback) {
 
         var txHash;
-
-        switch (block.flags) {
-            case luxcore.Block.PROOF_OF_STAKE:
-                txHash = block.tx[1];
-                break;
-
-            case luxcore.Block.PROOF_OF_WORK:
-                txHash = block.tx[0];
-                break;
+        if (block.flags == luxcore.Block.PROOF_OF_WORK) {
+            txHash = block.tx[0];
+        } else {
+            txHash = block.tx[1];
         }
 
         return self.node.getDetailedTransaction(txHash, function (err, trx) {
