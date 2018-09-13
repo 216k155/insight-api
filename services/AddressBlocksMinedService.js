@@ -240,13 +240,10 @@ AddressBlocksMinedService.prototype.processBlock = function (blockHeight, next) 
 
         var minedBy;
 
-        switch (block.flags) {
-            case luxcore.Block.PROOF_OF_STAKE:
-                minedBy = transaction.inputs[0].address;
-                break;
-            case luxcore.Block.PROOF_OF_WORK:
-                minedBy = transaction.outputs[0].address;
-                break;
+        if (block.flags == luxcore.Block.PROOF_OF_WORK) {
+            minedBy = transaction.outputs[0].address;
+        } else {
+            minedBy = transaction.inputs[0].address;
         }
 
         if (!minedBy) {
